@@ -2,6 +2,10 @@
 
 This repository is a testbed for all sorts of small scripts I write that don't make a sensible standalone project.
 
+## quote
+
+Small demo that displays a quote with a fancy animated background
+
 ## debug.js
 
 Displays debug messages in a small canvas at the top left of the page. 
