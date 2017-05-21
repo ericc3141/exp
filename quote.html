@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+<title></title>
+
+<script src="sylvester.src.js" type="text/Javascript" ></script>
+<script src="glUtils.js" type="text/Javascript" /></script>
+<script src="gl.js" type="text/Javascript" /></script>
+<script src="shaders.js" type="text/Javascript" /></script>
+<script src="particle.js" type="text/Javascript" /></script>
+<script src="config.js" type="text/Javascript" /></script>
+<script src="main.js" type="text/Javascript" /></script>
+<script src="debug.js" type="text/Javascript" /></script>
+
+<script id="vshader" type="x-shader/x-vertex">
+
+uniform float u_aspect;
+uniform float u_t;
+uniform mat4 u_perspective;
+uniform mat4 u_translation;
+
+attribute vec3 a_vertPos;
+attribute vec4 a_colorStart;
+attribute vec4 a_colorEnd;
+attribute float a_t0;
+attribute float a_tf;
+attribute vec2 a_v;
+attribute vec2 a_a;
+attribute vec2 a_pos;
+attribute vec2 a_size;
+
+varying vec4 v_color;
+varying vec2 v_relPos;
+
+void main(void){
+	if (u_t > a_tf){
+		gl_Position = vec4(0,0,0,0);
+		return;
+	}
+	float dt = u_t - a_t0;
+	vec2 offset = a_v*dt + 0.5*a_a*dt*dt;
+	vec4 pos = vec4(a_vertPos, 1.0) + vec4(offset, 0,0);
+	gl_Position = u_perspective * u_translation * pos;
+	float relx = ( a_vertPos[0] - a_pos[0] ) / a_size[0];
+	float rely =-( a_vertPos[1] - a_pos[1] ) / a_size[1];
+	float lerp = dt / (a_tf - a_t0);
+	v_color = (a_colorStart * (1.0 - lerp)) + (a_colorEnd * lerp);
+	v_relPos = vec2(relx, rely);
+}
+
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+
+precision mediump float;
+
+varying vec4 v_color;
+varying vec2 v_relPos;
+
+void main(void){
+	gl_FragColor = v_color;
+	
+	//gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//gl_FragColor = texture2D(u_sampler, v_texCoord);
+}
+
+</script>
+
+<style>
+
+html,body{
+	height:100%;
+	margin:0;
+	padding:0;
+	overflow:hidden;
+}
+
+body{
+	background-color:rgba(20,40,60,1.0);
+}
+
+.text{
+	position:fixed;
+	color:rgba(230,240,255,230);
+	font-family:sans-serif;
+	font-weight:100;
+	font-size:4em;
+	text-shadow:0 0 1em rgba(255,255,255,0.75);
+	animation-name: pulse;
+	animation-duration: 5s; 
+	animation-timing-function: ease-in-out; 
+	animation-delay: 0s;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+	animation-fill-mode: both;
+	animation-play-state: running; 
+}
+
+#t0{
+	top:10%;
+	left:10%;
+	width:60%;
+}
+#t1{
+	bottom:20%;
+	right:10%;
+	font-size:3em;
+}
+#t2{
+	bottom:10%;
+	right:10%;
+	font-size:2em;
+}
+
+@keyframes pulse {
+	0% {
+		transform:translate3d(0,0,0);
+	}
+	100% {
+		transform: perspective(500px) translate3d(.1em, .02em, .2em);
+	}
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="cvs" ></canvas>
+<canvas id="dbg" ></canvas>
+
+<span class="text" id="t0">Any project that you can never feel finished on is a good project.</span>
+<span class="text" id="t1">Unless you need to finish.</span>
+<span class="text" id="t2">In which case, get to work.</span>
+
+</body>
+
+</html>
