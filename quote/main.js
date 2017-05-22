@@ -30,7 +30,7 @@ function main(){
 }
 
 function loadParticles(){
-	var particleInfo = particles.genData();
+	var particleInfo = particles.data;
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(particleInfo), gl.STATIC_DRAW);
 	var stride = 84
 	var attribs = [

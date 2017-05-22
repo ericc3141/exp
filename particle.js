@@ -8,22 +8,26 @@
 class ParticleSys{
 	constructor(opts){
 		this.num = opts.num;
+		this.data = [];
 		this.t = 0;
 		for (var i = 0;i < this.num;i ++){
 			this[i] = new Particle();
 		}
-	}
-	genData(){
-		var arr = [];
-		for (var i = 0;i < this.num;i ++){
-			var o = this[i];
-			var tl = this.genAttrib(o,"tl");
-			var tr = this.genAttrib(o,"tr");
-			var bl = this.genAttrib(o,"bl");
-			var br = this.genAttrib(o,"br");
-			arr = arr.concat(tl,tr,bl,bl,tr,br);
+		for (var i = 0;i < this.num * 6 * 21;i ++){
+			this.data.push(0);
 		}
-		return arr;
+	}
+	genData(i){
+		var arr = [];
+		var o = this[i];
+		var tl = this.genAttrib(o,"tl");
+		var tr = this.genAttrib(o,"tr");
+		var bl = this.genAttrib(o,"bl");
+		var br = this.genAttrib(o,"br");
+		arr = arr.concat(tl,tr,bl,bl,tr,br);
+		for (var j = 0;j < arr.length;j ++){
+			this.data[i*126 + j] = arr[j];
+		}
 	}
 	genAttrib(p,corner){
 		var mat = p.pos.slice();
@@ -32,12 +36,13 @@ class ParticleSys{
 		mat = mat.concat(p.colorStart[corner],p.colorEnd[corner],[p.t0,p.t0+p.life],p.v,p.a,p.pos.slice(0,2),p.size);
 		return mat;
 	}
-	spawn(opts){
+	spawn(opts, update){
 		for (var i = 0;i < this.num;i ++){
 			if (this.t > this[i].t0 + this[i].life){
 				this[i] = new Particle(opts);
 				this[i].t0 = this.t;
-				return this[i];
+				if (update){this.genData(i);}
+				return i;
 			}
 		}
 		return false;
@@ -48,7 +53,8 @@ class ParticleSys{
 		if (!p){
 			return false;
 		}
-		p = this.randomize(p, r);
+		this[p] = this.randomize(this[p], r);
+		this.genData(p);
 		return p;
 	}
 	randomize(val, range){
