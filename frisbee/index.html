@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale = 1, user-scalable=no">
+
+<title>Frisbee Fisics</title>
+
+<script type="text/Javascript" src="frisbee.js" ></script>
+<script type="text/Javascript" src="plotter.js" ></script>
+<script type="text/Javascript">
+"use strict";
+
+function doSim(p){
+	sim.params = p;
+	var d = simulate(p);
+	sim.data = d;
+
+	var maxX = 0;
+	var maxY = 0;
+	for (var i = 0;i < d.length;i ++){
+		if (d[i][1] > maxY){
+			maxY = d[i][1];
+		}
+	}
+	for (var i = 0;i < d.length;i ++){
+		if (d[i][0] > maxX){
+			maxX = d[i][0];
+		}
+	}
+	sim.maxX = maxX;
+	sim.maxY = maxY;
+}
+
+function main(){
+	var changed = false;
+	var params = {};
+	for(var i in inputs){
+		var p = inputs[i];
+		params[i] = parseFloat(p.i.value);
+		if (params[i] != sim.params[i]){
+			if (i!="scale"){changed = true};
+			p.o.innerHTML = params[i];
+		}
+	}
+	if (changed){
+		doSim(params);
+	}
+
+	if (changed || params.scale != plt.scale){
+		plt.scale = params.scale;
+		plt.resize(sim.maxX+2, sim.maxY+2);
+		plt.reorigin(1,sim.maxY+1);
+		plt.drawAxes(2,1);
+		plt.plot(sim.data);
+		//plt.plot(dbgData);
+	}
+
+	requestAnimationFrame(main);
+}
+
+function init(){
+	var cvs = document.getElementById("cvs");
+	window.plt = new Plotter(cvs);
+	plt.scale = 25;
+
+	var params = ["scale", "y0", "vx0", "vy0", "a", "dt"];
+	window.inputs = {};
+	for (var i = 0;i < params.length;i ++){
+		var p = {};
+		p.i = document.getElementById(params[i]);
+		p.o = document.getElementById("d" + params[i]);
+		inputs[params[i]] = p;
+	}
+
+	window.sim={params:{},data:[]};
+
+	main();
+}
+
+window.addEventListener("load", init);
+
+</script>
+
+<style>
+
+html, body{
+	margin:0;
+	height:100%;
+}
+
+#disp{
+	width:99%;
+	height:calc(100% - 6em);
+	overflow:scroll;
+	position:relative;
+	display:flex;
+	flex-direction:column-reverse;
+}
+
+#cvs{
+	bottom:0;
+}
+#overlay{
+	width:99%;
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+#inputs span span{
+	display:inline-block;
+	width:2em;
+}
+.input{
+	display:inline-block;
+	margin-left:1em;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="disp">
+	<canvas id="cvs"></canvas>
+	<canvas id="overlay"></canvas>
+</div>
+
+<div id="inputs">
+	<span class="input">Scale (pixels per meter): <span id="dscale"></span> <input id="scale" type="range" value=20 min=5 max=100 step=5 /></span>
+	<span class="input">Simulation time step (sec): <span id="ddt"></span> <input id="dt" type="range" value=0.001 min=0.0005 max=0.01 step=0.0005 /></span>
+	<br/>
+	<span>Starting Conditions:</span>
+	<span class="input">Height (m): <span id="dy0"></span> <input id="y0" type="range" value=1 min=0.1 max=5 step=0.1 /></span>
+	<span class="input">X velocity (m/s): <span id="dvx0"></span> <input id="vx0" type="range" value=14 min=0 max=20 step=0.5 /></span>
+	<span class="input">Y velocity (m/s): <span id="dvy0"></span> <input id="vy0" type="range" value=0 min=-10 max=10 step=0.1 /></span>
+	<span class="input">Angle of Attack (deg): <span id="da"></span> <input id="a" type="range" value=10 min=-20 max=50 step=1 /></span>
+</div>
+
+</body>
+
+</html>
