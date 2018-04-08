@@ -4,9 +4,19 @@
 
 <head>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Solar Irradiance</title>
 
 <style>
+
+.conversion{
+    display:inline-block;
+    margin:0.3em;
+}
+.r{
+    float:right;
+}
 
 </style>
 
@@ -72,17 +82,20 @@ window.addEventListener("load", init);
 
 <p>At a distance of 1 AU from the sun, you get...</p>
 
-<span id="disp">1.36e+3</span>
+<span class="conversion l">
+    <span id="disp">1.36e+3</span>
 
-<select id="powerSelect">
-</select>
-(<span id="powerDisp">1</span> W.)
+    <select id="powerSelect">
+    </select>
+    (<span id="powerDisp">1</span> W.)
+</span>
+<span class="conversion r">
+    <span>Per</span>
 
-<span>Per</span>
-
-<select id="areaSelect">
-</select>
-(<span id="areaDisp">1</span> sq. m.)
+    <select id="areaSelect">
+    </select>
+    (<span id="areaDisp">1</span> sq. m.)
+</span>
 
 </body>
 
