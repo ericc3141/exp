@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+<title>Solar Irradiance</title>
+
+<style>
+
+</style>
+
+<script type="text/Javascript">
+"use strict";
+
+var disp;
+
+var IRRADIANCE = 1364; // Watts per square meter
+var POWER = { // in watts
+    "Watts":1,
+    "Horsepower":745.7,
+    "Dodge Demons":840*745.7
+};
+var AREA = { // in sq meters
+    "Sq. Meter":1.,
+    "Tennis Court":24.77*(8.2+1.37)
+}
+
+var p = POWER["Watts"];
+var a = AREA["Sq. Meter"];
+
+function dispNum(n){
+    var str = n.toExponential();
+    var e = str.indexOf("e");
+    str = str.slice(0,4) + str.slice(e);
+    return str;
+}
+function recalc(e){
+    var unit = e.target.value;
+    if (unit in POWER){
+        p = POWER[unit];
+        powerDisp.innerHTML = dispNum(p);
+    } else if (unit in AREA){
+        a = AREA[unit];
+        areaDisp.innerHTML = dispNum(a);
+    }
+    var power = IRRADIANCE / p * a;
+    disp.innerHTML = dispNum(power);
+}
+
+function createOpt(str){
+    var opt = document.createElement("option");
+    opt.innerHTML = str;
+    opt.value = str;
+    return opt;
+}
+
+function init(){
+    var elems = ["disp", "powerSelect", "areaSelect", "powerDisp", "areaDisp"];
+    for (var i = 0; i < elems.length; i ++){
+        disp = document.getElementById("disp");
+    }
+    for (var i in POWER){
+        powerSelect.appendChild(createOpt(i));
+    }
+    for (var i in AREA){
+        areaSelect.appendChild(createOpt(i));
+    }
+    powerSelect.addEventListener("change", recalc);
+    areaSelect.addEventListener("change", recalc);
+}
+
+window.addEventListener("load", init);
+
+</script>
+
+<body>
+
+<h1>Solar Irradiance</h1>
+
+<p>At a distance of 1 AU from the sun, you get...</p>
+
+<span id="disp">1.36e+3</span>
+
+<select id="powerSelect">
+</select>
+(<span id="powerDisp">1</span> W.)
+
+<span>Per</span>
+
+<select id="areaSelect">
+</select>
+(<span id="areaDisp">1</span> sq. m.)
+
+</body>
+
+</html>
