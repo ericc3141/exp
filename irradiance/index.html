@@ -17,18 +17,20 @@ var disp;
 
 var IRRADIANCE = 1364; // Watts per square meter
 var POWER = { // in watts
-    "Watts":1,
-    "Toasters":1200,
+    "(Very average) Phone":1,
+    "People":100.,
     "Intel Atoms":2.5,
     "AMD Threadrippers":324.4,
+    "Toasters":1200,
     "Horsepower":745.7,
     "\"Prii\"":121*745.7,
     "Dodge Demons":840*745.7,
     "Lightsabers":6.96e6,
     "Large Hadron Colliders":200e6,
+    "Nuclear Power Plants":3937e6,
 };
 var AREA = { // in sq meters
-    "Sq. Meter":1.,
+    "60\" TV":0.992,
     "16\" Pizza":0.1297,
     "Suntan":0.6,
     "Avery Single":11.52,
@@ -37,8 +39,8 @@ var AREA = { // in sq meters
     "California":423.97e9,
 }
 
-var p = POWER["Watts"];
-var a = AREA["Sq. Meter"];
+var p = POWER[Object.keys(POWER)[0]];
+var a = AREA[Object.keys(AREA)[0]];
 
 function dispNum(n){
     var str = n.toExponential();
