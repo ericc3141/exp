@@ -14,8 +14,38 @@
     display:inline-block;
     margin:0.3em;
 }
-.r{
-    float:right;
+@media (max-width:600px){
+    .r{
+        float:right;
+    }
+}
+
+
+/**
+ * Colors
+ */
+:root{
+  --back1:250,245, 235;
+  --back2:250,232,206;
+  /* Normal Text */
+  --txt:34,34,34;
+  /* sub-text (footer, post-meta) */
+  --txt1:152,162,146;
+  /* Link, unvisited/visited */
+  --link1:53,195,181;
+  --link2:39,179,127;
+  /* Mostly borders */
+  --accent1:125,240,136;
+  --accent2:197,95,57;
+}
+html{
+  border-top: 5px solid rgb(var(--accent1));
+  background-color: rgb(var(--back1));
+  color: rgb(var(--txt));
+  font-family:sans-serif;
+}
+h1 {
+  font-weight: 400;
 }
 
 </style>
@@ -80,7 +110,7 @@ window.addEventListener("load", init);
 
 <h1>Solar Irradiance</h1>
 
-<p>At a distance of 1 AU from the sun, you get...</p>
+<p>At a distance of 1 AU from the sun, you get*...</p>
 
 <span class="conversion l">
     <span id="disp">1.36e+3</span>
@@ -96,6 +126,9 @@ window.addEventListener("load", init);
     </select>
     (<span id="areaDisp">1</span> sq. m.)
 </span>
+
+<p>*As measured in space (not accounting for atmospheric absorbance). <br/>
+At the equator, the atmosphere takes about a quarter off that number.</p>
 
 </body>
 

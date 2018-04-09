@@ -1,8 +1,8 @@
 "use strict";
 
-var IRRADIANCE = 1364; // Watts per square meter
+var IRRADIANCE = 1364.3; // Watts per square meter
 var POWER = { // in watts
-    "Average Flashlight":1,
+    "Average Flashlights":1,
     "People":100.,
     "Intel Atoms":2.5,
     "AMD Threadrippers":324.4,
