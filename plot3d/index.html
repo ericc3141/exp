@@ -133,15 +133,17 @@ void main() {
  
 // fragment shaders don't have a default precision so we need
 // to pick one. mediump is a good default. It means "medium precision"
-precision mediump float;
+precision highp float;
 
 in float x0;
 in float y0;
 
-float scale = 1.;
+float pix = 1920./2.;
+float scale = 2.;
 float aspect = 9./9.;
-float depth = 2.;
-vec3 mid = vec3(0.,0.,0.);
+float depth = 8.;
+float gap = 1.;
+vec3 mid = vec3(0.,0.,-4.);
 // we need to declare an output for the fragment shader
 out vec4 outColor;
 
@@ -152,14 +154,26 @@ vec3 hsv2rgb(vec3 c)
     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
+
+float f(float x, float y){
+    //return x + y;
+    return pow(x, 2.0) - pow(y, 2.0);
+    //float z = sin(x) + cos(y);
+    //float z = 5. - 2.*x - 2.*y;
+}
  
 void main() {
     // Just set the output to a constant redish-purple
     float x = x0 * scale + mid[0];
     float y = y0 * scale / aspect + mid[1];
-    //float z = x1 + y1;
-    float z = pow(x, 2.0) + pow(y, 2.0);
-    if (mod(z, 0.25) < 0.005) {
+    float z = f(x, y);
+    float d = 2.*scale/pix;
+    vec2 grad = vec2(f(x+d, y), f(x, y+d));
+    grad -= z;
+    grad = normalize(grad);
+    grad *= d;
+    float dz = f(x+grad[0], y+grad[1]);
+    if (mod(z, gap) > .25 && mod(dz, gap) < 0.25) {
         outColor = vec4(0., 0., 0., 1.);
     } else {
         z = clamp((z-mid[2])/depth, 0., 5./6.);
