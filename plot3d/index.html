@@ -141,9 +141,9 @@ in float y0;
 float pix = 1920./2.;
 float scale = 2.;
 float aspect = 9./9.;
-float depth = 8.;
+float depth = 2.;
 float gap = 1.;
-vec3 mid = vec3(0.,0.,-4.);
+vec3 mid = vec3(0.,0.,-1.);
 // we need to declare an output for the fragment shader
 out vec4 outColor;
 
@@ -157,8 +157,8 @@ vec3 hsv2rgb(vec3 c)
 
 float f(float x, float y){
     //return x + y;
-    return pow(x, 2.0) - pow(y, 2.0);
-    //float z = sin(x) + cos(y);
+    //return pow(x, 2.0) - pow(y, 2.0);
+    return sin(x) + cos(y);
     //float z = 5. - 2.*x - 2.*y;
 }
  
@@ -167,18 +167,16 @@ void main() {
     float x = x0 * scale + mid[0];
     float y = y0 * scale / aspect + mid[1];
     float z = f(x, y);
-    float d = 2.*scale/pix;
+    float d = 2.5*scale/pix;
     vec2 grad = vec2(f(x+d, y), f(x, y+d));
     grad -= z;
     grad = normalize(grad);
     grad *= d;
-    float dz = f(x+grad[0], y+grad[1]);
-    if (mod(z, gap) > .25 && mod(dz, gap) < 0.25) {
-        outColor = vec4(0., 0., 0., 1.);
-    } else {
-        z = clamp((z-mid[2])/depth, 0., 5./6.);
-        outColor = vec4(hsv2rgb(vec3(z, 1.0, 1.0)), 1);
-    }
+    float dz = (f(x+grad[0], y+grad[1]) - z) * 2.;
+    float fac = clamp((gap-mod(z, gap)) / dz, 0., 1.);
+    
+    z = clamp((z-mid[2])/depth, 0., 5./6.);
+    outColor = vec4(fac * hsv2rgb(vec3(z, 1.0, 1.0)), 1);
 }
 </script>
 
