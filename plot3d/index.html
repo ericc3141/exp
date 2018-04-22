@@ -142,7 +142,7 @@ float pix = 1920./2.;
 float scale = 2.;
 float aspect = 9./9.;
 float depth = 2.;
-float gap = 1.;
+float gap = .3;
 vec3 mid = vec3(0.,0.,-1.);
 // we need to declare an output for the fragment shader
 out vec4 outColor;
@@ -172,8 +172,8 @@ void main() {
     grad -= z;
     grad = normalize(grad);
     grad *= d;
-    float dz = (f(x+grad[0], y+grad[1]) - z) * 2.;
-    float fac = clamp((gap-mod(z, gap)) / dz, 0., 1.);
+    float dz = (f(x+grad[0], y+grad[1]) - z);
+    float fac = clamp(abs(dz/2. - (gap-mod(z, gap))) / dz, 0., 1.);
     
     z = clamp((z-mid[2])/depth, 0., 5./6.);
     outColor = vec4(fac * hsv2rgb(vec3(z, 1.0, 1.0)), 1);
