@@ -24,12 +24,51 @@ html,body{
 var dim, disp, gl;
 var vert, frag;
 var prog;
+var pointer = {
+    "down":false,
+    "pos":[0,0],
+    "prev":[0,0],
+    "start":[0,0]
+}
+var keys = {
+    "Control":false
+};
 var params={
     "u_mid":{
         "loc":null,
         "type":"3f",
-        "prev":[0,0,0],
+        "update":true,
         "val":[0,0,0]
+    },
+    "u_scale":{
+        "loc":null,
+        "type":"1f",
+        "update":true,
+        "val":1,
+    },
+    "u_pix":{
+        "loc":null,
+        "type":"1f",
+        "update":true,
+        "val":0.01,
+    },
+    "u_aspect":{
+        "loc":null,
+        "type":"1f",
+        "update":true,
+        "val":1.,
+    },
+    "u_gap":{
+        "loc":null,
+        "type":"1f",
+        "update":true,
+        "val":1.,
+    },
+    "u_depth":{
+        "loc":null,
+        "type":"1f",
+        "update":true,
+        "val":5.,
     }
 };
 
@@ -65,16 +104,74 @@ function setUniform(gl, loc, type, val){
         case ("3f"):
             gl.uniform3f(loc, val[0], val[1], val[2]);
             break;
+        case ("1f"):
+            gl.uniform1f(loc, val);
+            break;
     }
+}
+
+function down(e){
+    pointer.down = true;
+    pointer.pos[0] = pointer.prev[0] = pointer.start[0] = e.clientX;
+    pointer.pos[1] = pointer.prev[1] = pointer.start[1] = e.clientY;
+    console.log("down");
+}
+function move(e){
+    pointer.pos[0] = e.clientX;
+    pointer.pos[1] = e.clientY;
+}
+function up(e){
+    pointer.down = false;
+    console.log("up");
+}
+function kdown(e){
+    keys[e.key] = true;
+}
+function kup(e){
+    keys[e.key] = false;
+}
+
+function updateParams(){
+    if (!pointer.down) { return; }
+    var pan = [pointer.pos[0]-pointer.prev[0], pointer.pos[1]-pointer.prev[1]];
+    if (Math.abs(pan[0]) < 1 && Math.abs(pan[1]) < 1) { return; }
+    
+    pan[1] *= params.u_pix.val;
+    pan[0] *= params.u_pix.val;
+    if (keys.Shift) {
+        params.u_mid.update = true;
+        params.u_gap.update = true;
+        params.u_mid.val[2] += 10 * pan[1];
+        params.u_gap.val += pan[0];
+    } else if (keys.Control) {
+        params.u_scale.update = true;
+        params.u_depth.update = true;
+        params.u_scale.val += pan[1];
+        params.u_depth.val += pan[0];
+    } else {
+        params.u_mid.update = true;
+        params.u_mid.val[0] -= pan[0];
+        params.u_mid.val[1] += pan[1];
+    }
+    pointer.prev[0] = pointer.pos[0];
+    pointer.prev[1] = pointer.pos[1];
 }
 
 function main(){
     requestAnimationFrame(main);
+    updateParams();
+    var redraw = false;
     for (var i in params) {
-        setUniform(gl, params[i].loc, params[i].type, params[i].val);
+        if (params[i].update){
+            redraw = true;
+            params[i].update = false;
+            setUniform(gl, params[i].loc, params[i].type, params[i].val);
+        }
     }
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0,6);
+    if (redraw){
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0,6);
+    }
 }
 
 function init(){
@@ -122,6 +219,13 @@ function init(){
     for (var i in params){
         params[i].loc = gl.getUniformLocation(prog, i);
     }
+    params.u_pix.val = 2. / window.innerWidth;
+    params.u_aspect.val = window.innerWidth / window.innerHeight;
+    document.body.addEventListener("pointerdown", down, false);
+    document.body.addEventListener("pointermove", move, false);
+    document.body.addEventListener("pointerup", up, false);
+    document.body.addEventListener("keydown", kdown, false);
+    document.body.addEventListener("keyup", kup, false);
     main();
 }
 
@@ -151,11 +255,11 @@ precision highp float;
 in float x0;
 in float y0;
 
-float pix = 1920./2.;
-float scale = 4.;
-float aspect = 9./9.;
-float depth = 4.;
-float gap = 5.;
+uniform float u_pix; // = 1920./2.;
+uniform float u_scale; // = 8.;
+uniform float u_aspect; // = 9./9.;
+uniform float u_depth; // = 20.;
+uniform float u_gap; // = 2.;
 uniform vec3 u_mid; // = vec3(-8.,-11./3.,0.);
 out vec4 outColor;
 
@@ -167,26 +271,37 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
+float p(float a, int b){
+    float r = a;
+    for (int i = 1;i < b; i ++) {
+        r *= a;
+    }
+    return r;
+}
+
 float f(float x, float y){
     //return x + y;
     //return pow(x, 2.0) - pow(y, 2.0);
-    return sin(x) + cos(y);
-    //return (pow(x,2.) - 3.*x*y + 5.*x - 2.*y + 6.*pow(y,2.) + 8.);
+    //return sin(x) + cos(y);
+    //return 5.*y*exp(x) - exp(5.*x) - p(y, 5);
+    return p(x, 2) - 3.*x*y + 5.*x - 2.*y + 6.*p(y,2) + 8.;
+    //return y + x * sin(y);
+    //return p(y, 3);
 }
  
 void main() {
-    float x = x0 * scale + u_mid[0];
-    float y = y0 * scale / aspect + u_mid[1];
+    float x = x0 * u_scale + u_mid[0];
+    float y = y0 * u_scale / u_aspect + u_mid[1];
     float z = f(x, y);
-    float d = 2.5*scale/pix;
+    float d = u_scale * u_pix;
     vec2 grad = vec2(f(x+d, y), f(x, y+d));
     grad -= z;
     grad = normalize(grad);
     grad *= d;
     float dz = (f(x+grad[0], y+grad[1]) - z);
-    float fac = clamp(abs(dz/2. - (gap-mod(z, gap))) / dz, 0., 1.);
+    float fac = clamp(abs(dz/2. - (u_gap-mod(z, u_gap))) / dz, 0., 1.);
     
-    z = clamp((z+u_mid[2])/depth, 0., 5./6.);
+    z = clamp((z+u_mid[2])/u_depth, 0., 5./6.);
     outColor = vec4(fac * hsv2rgb(vec3(z, 1.0, 1.0)), 1);
 }
 </script>
