@@ -141,13 +141,13 @@ function updateParams(){
     if (keys.Shift) {
         params.u_mid.update = true;
         params.u_gap.update = true;
-        params.u_mid.val[2] += 10 * pan[1];
+        params.u_mid.val[2] += params.u_depth.val * pan[1];
         params.u_gap.val += pan[0];
     } else if (keys.Control) {
         params.u_scale.update = true;
         params.u_depth.update = true;
-        params.u_scale.val += pan[1];
-        params.u_depth.val += pan[0];
+        params.u_scale.val *= 1+pan[1];
+        params.u_depth.val *= 1+pan[0];
     } else {
         params.u_mid.update = true;
         params.u_mid.val[0] -= pan[0];
