@@ -21,9 +21,8 @@ html,body{
 <script type="text/Javascript">
 "use strict";
 
-var dim, disp, gl;
-var vert, frag;
-var prog;
+var gl;
+var disp;
 var pointer = {
     "down":false,
     "pos":[0,0],
@@ -107,6 +106,13 @@ function setUniform(gl, loc, type, val){
         case ("1f"):
             gl.uniform1f(loc, val);
             break;
+        case ("pos2Buf"):
+            var buff = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buff);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(val), gl.STATIC_DRAW);
+
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     }
 }
 
@@ -142,7 +148,7 @@ function updateParams(){
         params.u_mid.update = true;
         params.u_gap.update = true;
         params.u_mid.val[2] += params.u_depth.val * pan[1];
-        params.u_gap.val += pan[0];
+        params.u_gap.val *= 1+pan[0];
     } else if (keys.Control) {
         params.u_scale.update = true;
         params.u_depth.update = true;
@@ -150,8 +156,8 @@ function updateParams(){
         params.u_depth.val *= 1+pan[0];
     } else {
         params.u_mid.update = true;
-        params.u_mid.val[0] -= pan[0];
-        params.u_mid.val[1] += pan[1];
+        params.u_mid.val[0] -= params.u_scale.val * pan[0];
+        params.u_mid.val[1] += params.u_scale.val * pan[1];
     }
     pointer.prev[0] = pointer.pos[0];
     pointer.prev[1] = pointer.pos[1];
@@ -179,19 +185,24 @@ function init(){
     gl = disp.getContext("webgl2");
     gl.disable(gl.CULL_FACE);
 
-    dim = [window.innerWidth, window.innerHeight];
+    var dim = [window.innerWidth, window.innerHeight];
     disp.width = dim[0];disp.height = dim[1];
     disp.style.width = dim[0]+"px";
     disp.style.height = dim[1]+"px";
 
     var vertSrc = document.getElementById("vert").innerHTML;
-    vert = createShader(gl, gl.VERTEX_SHADER, vertSrc);
+    var vert = createShader(gl, gl.VERTEX_SHADER, vertSrc);
     var fragSrc = document.getElementById("frag").innerHTML;
-    frag = createShader(gl, gl.FRAGMENT_SHADER, fragSrc);
+    var frag = createShader(gl, gl.FRAGMENT_SHADER, fragSrc);
 
-    prog = createProgram(gl, vert, frag);
+    var prog = createProgram(gl, vert, frag);
+
+    for (var i in params){
+        params[i].loc = gl.getUniformLocation(prog, i);
+    }
 
     var attribLoc = gl.getAttribLocation(prog, "a_position");
+
     var posBuff = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuff);
     var pos = [
@@ -202,23 +213,12 @@ function init(){
         1,-1,
         1,1
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pos), gl.STATIC_DRAW);
-
-    var vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-    gl.enableVertexAttribArray(attribLoc);
-    gl.vertexAttribPointer(attribLoc, 2, gl.FLOAT, false, 0, 0);
+    setUniform(gl, attribLoc, "pos2Buf", pos);
     gl.viewport(0,0, dim[0], dim[1]);
 
     gl.clearColor(0,0,0,0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
     gl.useProgram(prog);
-    gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    for (var i in params){
-        params[i].loc = gl.getUniformLocation(prog, i);
-    }
     params.u_pix.val = 2. / window.innerWidth;
     params.u_aspect.val = window.innerWidth / window.innerHeight;
     document.body.addEventListener("pointerdown", down, false);
