@@ -1,0 +1,33 @@
+:root {
+    --lightgray: #ECECEC;
+    --gray: #868686;
+}
+
+html, body {
+    height: 100%;
+}
+html {
+    box-sizing: border-box;
+    margin: 0;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+    margin: inherit;
+}
+
+#tape {
+    width: 50%;
+    min-width: 10em;
+    height: 100%;
+    padding: 1em;
+    background-color: var(--lightgray);
+}
+
+.cell {}
+.currcell {
+    background-color: var(--gray);
+}
+
+.cell input[type=text] {
+
+}
