@@ -1,103 +1,96 @@
 "use strict";
 
+let elems = {};
 let tape;
 
-const fns = {
+const fns = [{
     "+": [2, ([a, b]) => a+b ],
     "-": [2, ([a, b]) => a-b ],
     "*": [2, ([a, b]) => a*b ],
     "/": [2, ([a, b]) => a/b ],
-}
+}];
 
-const newTape = (aparent, afns) => {
-    let parent = aparent;
-    let fns = [afns];
+const makeTape = (parent) => {
     let data = {};
     let elems = {};
     let curr = 0;
 
-    data[0] = "";
-    parent.addEventListener("keydown", onkeydown);
-    elems[0] = elem("");
-    elems[0].classList.add("currcell");
-    elems[0].childNodes[0].focus();
-
     /* Create new element, append it to parent, and return it. */
-    function elem(v) {
+    function elem(i) {
         let elem = document.createElement("li");
-        let txt = document.createElement("input");
-
-        txt.type="textbox";
-        txt.value = v;
-        elem.appendChild(txt);
         parent.appendChild(elem);
         return elem;
     }
 
-    function onkeydown(e) {
-        if (e.key == "Enter") {
-            if (!e.shiftKey) {
-                move(1);
-            } else {
-                move(-1);
-            }
-        }
-        let f;
-        for (let i in fns) {
-            if (e.target.value+e.key in fns[i]) {
-                f = fns[i][e.target.value+e.key];
-                break;
-            } else if (e.key in fns[i]) {
-                f = fns[i][e.key];
-                break;
-            }
-        }
-        if (f) {
-            e.preventDefault();
-            elems[curr].childNodes[0].value = "";
-            let args = []
-            for (let i = 0; i < f[0]; i ++) {
-                args.push(pop());
-            }
-            push(f[1](args));
-        }
-    }
-
     function move(n) {
-        let v = elems[curr].childNodes[0].value;
-        let vf = parseFloat(v);
-        data[curr] = (isNaN(vf)) ? v : vf;
-        elems[curr].classList.remove("currcell");
-        curr += n;
-        if (!(curr in elems)) {
-            elems[curr] = elem("");
+        if (curr in elems) {
+            elems[curr].classList.remove("currcell");
         }
-        elems[curr].classList.add("currcell");
-        elems[curr].childNodes[0].focus();
-        return v;
+        curr += n;
+        if (curr in elems) {
+            elems[curr].classList.add("currcell");
+        }
     }
 
     function get() {
         return data[curr];
     }
     function push(v) {
-        elems[curr].childNodes[0].value = v;
+        data[curr] = v;
+        if (!(curr in elems)) {
+            elems[curr] = elem(curr);
+        }
+        elems[curr].textContent = v;
         move(1);
     }
     function pop() {
         move(-1);
-        elems[curr].childNodes[0].value = "";
-        return data[curr];
+        let v = data[curr];
+        delete data[curr];
+        parent.removeChild(elems[curr]);
+        delete elems[curr];
+        return v;
     }
 
     return {
-        parent, fns, data,
+        parent, data,
         get, move, push, pop,
     }
 }
 
+
+function onkeydown(e) {
+    if (e.key == "Enter") {
+        let v = parseInt(e.target.value);
+        e.target.select();
+        if (isNaN(v)) {v = 0;}
+        tape.push(v);
+        return;
+    }
+    let f;
+    for (let i in fns) {
+        if (e.key in fns[i]) {
+            f = fns[i][e.key];
+            break;
+        }
+    }
+    if (f) {
+        e.preventDefault();
+        let args = []
+        for (let i = 0; i < f[0]; i ++) {
+            args.push(tape.pop());
+        }
+        tape.push(f[1](args.reverse()));
+    }
+}
+
 function init() {
-    tape = newTape(document.getElementById("tape"), fns);
+    let ids = ["tape", "entry"];
+    for (let i in ids) {
+        elems[ids[i]] = document.getElementById(ids[i]);
+    }
+    tape = makeTape(elems.tape);
+    document.body.addEventListener("keydown", onkeydown);
 }
 
 window.addEventListener("load", init);
