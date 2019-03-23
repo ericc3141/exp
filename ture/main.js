@@ -18,18 +18,14 @@ const makeTape = (parent) => {
     /* Create new element, append it to parent, and return it. */
     function elem(i) {
         let elem = document.createElement("li");
+        elem.style.top = i*2+"em";
         parent.appendChild(elem);
         return elem;
     }
 
     function move(n) {
-        if (curr in elems) {
-            elems[curr].classList.remove("currcell");
-        }
         curr += n;
-        if (curr in elems) {
-            elems[curr].classList.add("currcell");
-        }
+        parent.style.marginTop = -curr*2 +"em";
     }
 
     function get() {

@@ -1,40 +1,53 @@
 :root {
     --lightgray: #ECECEC;
     --gray: #868686;
+    --line: 2em;
+    --space: .2em;
 }
 
 html, body {
     height: 100%;
 }
-html {
+*, *:before, *:after {
     box-sizing: border-box;
     margin: 0;
+    padding: 0;
 }
-*, *:before, *:after {
-    box-sizing: inherit;
-    margin: inherit;
+
+body {
+    font-size: 3em;
+    display: grid;
+    grid-template-columns: 40% auto;
+    grid-template-rows: auto var(--line) auto;
+    grid-template-areas:
+        "tape ctrl1"
+        "tape2 ctrl2"
+        "tape3 ctrl3";
 }
 
 #tape {
-    width: 30%;
-    min-width: 10em;
-    height: 100%;
-    display: inline-block;
-    padding: 1em;
+    grid-area: tape2;
+    position: relative;
+    margin-top: 0;
+    transition: margin-top 0.1s ease-out;
+}
+
+#tape li, #entry {
+    font-variant-numeric: tabular-nums;
+}
+
+#tape li {
+    list-style-type: none;
+    position: absolute;
     background-color: var(--lightgray);
+    width: 100%;
+    height: var(--line);
+    padding: var(--space);
+    text-align: right;
 }
 
-ul#tape {}
-
-.cell {}
-.currcell {
-    background-color: var(--gray);
-}
-
-.cell input[type=text] {
-
-}
-
-#control {
-    display: inline-block;
+#entry {
+    grid-area: ctrl2;
+    font-size: inherit;
+    width: 100%;
 }
