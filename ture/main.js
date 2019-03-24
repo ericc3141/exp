@@ -4,11 +4,13 @@ let elems = {};
 let tape;
 
 const fns = [{
-    "+": [2, ([a, b]) => a+b ],
-    "-": [2, ([a, b]) => a-b ],
-    "*": [2, ([a, b]) => a*b ],
-    "/": [2, ([a, b]) => a/b ],
-}];
+        "+": (a, b) => a+b,
+        "-": (a, b) => a-b,
+        "*": (a, b) => a*b,
+        "/": (a, b) => a/b,
+    },
+    Math,
+];
 
 const makeTape = (parent) => {
     let data = {};
@@ -28,6 +30,22 @@ const makeTape = (parent) => {
         parent.style.marginTop = -curr*2 +"em";
     }
 
+    function has(n) {
+        for (let i = 1; i <= n; i ++) {
+            if (!(curr - i in data)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function call(f) {
+        if (!f || !has(f.length)) { return; }
+        let args = [];
+        for (let i = 0; i < f.length; i ++) {
+            args.push(pop());
+        }
+        push(f.apply(null, args.reverse()));
+    }
     function get() {
         return data[curr];
     }
@@ -50,7 +68,16 @@ const makeTape = (parent) => {
 
     return {
         parent, data,
+        has, call,
         get, move, push, pop,
+    }
+}
+
+function findFunc(name, fns) {
+    for (let i in fns) {
+        if (name in fns[i]) {
+            return fns[i][name];
+        }
     }
 }
 
@@ -59,24 +86,18 @@ function onkeydown(e) {
     if (e.key == "Enter") {
         let v = parseInt(e.target.value);
         e.target.select();
-        if (isNaN(v)) {v = 0;}
-        tape.push(v);
+        if (isNaN(v)) {
+            let f = findFunc(e.target.value, fns);
+            tape.call(f);
+        } else {
+            tape.push(v);
+        }
         return;
     }
-    let f;
-    for (let i in fns) {
-        if (e.key in fns[i]) {
-            f = fns[i][e.key];
-            break;
-        }
-    }
+    let f = findFunc(e.key, fns);
     if (f) {
+        tape.call(f);
         e.preventDefault();
-        let args = []
-        for (let i = 0; i < f[0]; i ++) {
-            args.push(tape.pop());
-        }
-        tape.push(f[1](args.reverse()));
     }
 }
 
