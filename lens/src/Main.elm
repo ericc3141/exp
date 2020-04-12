@@ -28,6 +28,7 @@ type alias Model =
     , clickbox : Viewbox
     , id : Int
     , dragging : Maybe Int
+    , placing : Bool
     }
 
 
@@ -49,6 +50,7 @@ type Msg
     = New ( Float, Float )
     | Move ( Float, Float )
     | Drag (Maybe Int)
+    | Del Int
     | Resize
     | UpdateClickbox (Result Error Element)
     | Nop
@@ -63,8 +65,9 @@ init =
           , clickbox = { x = -500, y = -200, width = 600, height = 400 }
           , id = 0
           , dragging = Nothing
+          , placing = False
           }
-        , Task.attempt UpdateClickbox <| Dom.getElement "svgVis"
+        , Task.attempt UpdateClickbox <| Dom.getElement "demosvg"
         )
 
 
@@ -109,8 +112,8 @@ viewPoint lens dist ( id, ( x, y ) ) =
     g []
         (rays
             ++ [ circle
-                    [ Events.stopPropagationOn "pointermove" <| Decode.succeed ( Nop, True )
-                    , Events.stopPropagationOn "pointerdown" <| Decode.succeed ( Drag <| Just id, True )
+                    [ Events.stopPropagationOn "pointerdown" <| Decode.succeed ( Drag <| Just id, True )
+                    , Events.onClick <| Del id
                     , cx (String.fromFloat x)
                     , cy (String.fromFloat y)
                     , r "5"
@@ -142,14 +145,17 @@ view ({ clickbox, viewbox } as model) =
                     (Decode.field "clientY" Decode.float)
     in
     svg
-        [ id "svgVis"
+        [ id "demosvg"
         , viewBox viewboxString
-        , width <| String.fromFloat viewbox.width
-        , height <| String.fromFloat viewbox.height
+        , width "100%"
+        , height "100%"
         , Events.on "pointerleave" <| Decode.succeed <| Drag Nothing
         , Events.on "pointerup" <| Decode.succeed <| Drag Nothing
-        , Events.on "pointermove" <| pointerDecoder Move
-        , Events.on "pointerdown" <| pointerDecoder New
+        , Events.preventDefaultOn "pointermove" <| Decode.map (\msg -> ( msg, True )) <| pointerDecoder Move
+        , Events.preventDefaultOn "pointerdown" <| Decode.map (\msg -> ( msg, True )) <| pointerDecoder New
+
+        --, Events.on "pointermove" <| pointerDecoder Move
+        --, Events.on "pointerdown" <| pointerDecoder New
         ]
         (List.map (viewPoint model.lens (viewbox.x + viewbox.width)) (Dict.toList model.points))
 
@@ -159,9 +165,10 @@ update msg model =
     case msg of
         New coord ->
             ( { model
-                | points = Debug.log "new" <| Dict.insert model.id coord model.points
+                | points = Dict.insert model.id coord model.points
                 , dragging = Just model.id
                 , id = model.id + 1
+                , placing = True
               }
             , Cmd.none
             )
@@ -169,9 +176,7 @@ update msg model =
         Move coord ->
             case model.dragging of
                 Just id ->
-                    ( { model
-                        | points = Dict.insert id coord model.points
-                      }
+                    ( { model | points = Dict.insert id coord model.points }
                     , Cmd.none
                     )
 
@@ -179,17 +184,36 @@ update msg model =
                     ( model, Cmd.none )
 
         Drag id ->
-            ( { model | dragging = Debug.log "drag" id }, Cmd.none )
+            ( { model | dragging = id }, Cmd.none )
+
+        Del id ->
+            if model.placing then
+                ( { model | placing = False }, Cmd.none )
+
+            else
+                ( { model | points = Dict.remove id model.points }, Cmd.none )
 
         UpdateClickbox (Ok { element }) ->
-            ( { model | clickbox = element }, Cmd.none )
+            let
+                viewbox =
+                    model.viewbox
+
+                scale =
+                    viewbox.height / element.height
+            in
+            ( { model
+                | clickbox = element
+                , viewbox = { viewbox | x = -scale * element.width * 0.8, width = scale * element.width }
+              }
+            , Cmd.none
+            )
 
         UpdateClickbox (Err _) ->
             ( model, Cmd.none )
 
         Resize ->
             ( model
-            , Task.attempt UpdateClickbox <| Dom.getElement "svgVis"
+            , Task.attempt UpdateClickbox <| Dom.getElement "demosvg"
             )
 
         Nop ->
