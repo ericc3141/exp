@@ -3,6 +3,7 @@ module Main exposing (..)
 import Browser
 import Browser.Dom as Dom exposing (Element, Error)
 import Browser.Events
+import Color exposing (Color)
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Decoder)
@@ -28,7 +29,7 @@ type alias Model =
     , clickbox : Viewbox
     , id : Int
     , dragging : Maybe Int
-    , placing : Bool
+    , clicked : Bool
     }
 
 
@@ -61,24 +62,30 @@ init =
     always
         ( { points = Dict.empty
           , lens = { diameter = 52, focalLength = 35 }
-          , viewbox = { x = -500, y = -200, width = 600, height = 400 }
-          , clickbox = { x = -500, y = -200, width = 600, height = 400 }
-          , id = 0
+          , viewbox = { x = -500, y = -100, width = 400, height = 200 }
+          , clickbox = { x = -500, y = -100, width = 400, height = 200 }
+          , id = 1
           , dragging = Nothing
-          , placing = False
+          , clicked = False
           }
         , Task.attempt UpdateClickbox <| Dom.getElement "demosvg"
         )
 
 
-viewPoint : Lens -> Float -> ( Int, ( Float, Float ) ) -> Svg Msg
-viewPoint lens dist ( id, ( x, y ) ) =
-    let
-        stringify : List ( Float, Float ) -> String
-        stringify =
-            List.map (\( x_, y_ ) -> String.fromFloat x_ ++ "," ++ String.fromFloat y_)
-                >> String.join " "
+pointColor : Int -> Color
+pointColor id =
+    Color.hsl (toFloat (modBy 11 (id * 3)) / 11) 1 0.5
 
+
+stringify : List ( Float, Float ) -> String
+stringify =
+    List.map (\( x_, y_ ) -> String.fromFloat x_ ++ "," ++ String.fromFloat y_)
+        >> String.join " "
+
+
+viewRays : Lens -> Float -> ( Int, ( Float, Float ) ) -> Svg Msg
+viewRays lens dist ( id, ( x, y ) ) =
+    let
         refract : Float -> ( Float, Float )
         refract lensy =
             let
@@ -93,38 +100,42 @@ viewPoint lens dist ( id, ( x, y ) ) =
             in
             ( dist, lensy + refractedSlope * dist )
 
-        drawRay : Float -> Svg Msg
-        drawRay i =
-            let
-                lensy =
-                    lens.diameter * (i - 0.5)
-            in
-            polyline
-                [ fill "none"
-                , stroke "black"
-                , points <| stringify [ ( x, y ), ( 0, lensy ), refract lensy ]
-                ]
-                []
+        radius =
+            lens.diameter / 2
 
-        rays =
-            List.map drawRay (List.map (\i -> toFloat i / 10) (List.range 0 10))
+        color =
+            Color.toHsla <| pointColor id
     in
-    g []
-        (rays
-            ++ [ circle
-                    [ Events.stopPropagationOn "pointerdown" <| Decode.succeed ( Drag <| Just id, True )
-                    , Events.onClick <| Del id
-                    , cx (String.fromFloat x)
-                    , cy (String.fromFloat y)
-                    , r "5"
-                    ]
-                    []
-               ]
-        )
+    polyline
+        [ fill <| Color.toCssString <| Color.fromHsla { color | alpha = 0.3 }
+        , points <|
+            stringify
+                [ ( x, y )
+                , ( 0, -radius )
+                , refract -radius
+                , refract radius
+                , ( 0, lens.diameter / 2 )
+                , ( x, y )
+                ]
+        ]
+        []
+
+
+viewPoint : ( Int, ( Float, Float ) ) -> Svg Msg
+viewPoint ( id, ( x, y ) ) =
+    circle
+        [ Events.stopPropagationOn "pointerdown" <| Decode.succeed ( Drag <| Just id, True )
+        , Events.on "pointerup" <| Decode.succeed <| Del id
+        , cx (String.fromFloat x)
+        , cy (String.fromFloat y)
+        , r "5"
+        , fill <| Color.toCssString <| pointColor id
+        ]
+        []
 
 
 view : Model -> Html Msg
-view ({ clickbox, viewbox } as model) =
+view ({ clickbox, viewbox, lens } as model) =
     let
         viewboxString =
             List.map (\f -> f viewbox) [ .x, .y, .width, .height ]
@@ -143,6 +154,19 @@ view ({ clickbox, viewbox } as model) =
                 Decode.map2 clientToScene
                     (Decode.field "clientX" Decode.float)
                     (Decode.field "clientY" Decode.float)
+
+        viewLens =
+            Svg.path
+                [ d <|
+                    "M 0 "
+                        ++ String.fromFloat (lens.diameter / 2)
+                        ++ " a 100 100 0 0 0 0 "
+                        ++ String.fromFloat -lens.diameter
+                        ++ " a 100 100 0 0 0 0 "
+                        ++ String.fromFloat lens.diameter
+                , fill <| Color.toCssString <| Color.hsla 0.6 1 0.8 0.8
+                ]
+                []
     in
     svg
         [ id "demosvg"
@@ -153,30 +177,33 @@ view ({ clickbox, viewbox } as model) =
         , Events.on "pointerup" <| Decode.succeed <| Drag Nothing
         , Events.preventDefaultOn "pointermove" <| Decode.map (\msg -> ( msg, True )) <| pointerDecoder Move
         , Events.preventDefaultOn "pointerdown" <| Decode.map (\msg -> ( msg, True )) <| pointerDecoder New
-
-        --, Events.on "pointermove" <| pointerDecoder Move
-        --, Events.on "pointerdown" <| pointerDecoder New
         ]
-        (List.map (viewPoint model.lens (viewbox.x + viewbox.width)) (Dict.toList model.points))
+        (List.map (viewRays lens (viewbox.x + viewbox.width)) (Dict.toList model.points)
+            ++ [ viewLens ]
+            ++ List.map viewPoint (Dict.toList model.points)
+        )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        New coord ->
+        New ( x, y ) ->
             ( { model
-                | points = Dict.insert model.id coord model.points
+                | points = Dict.insert model.id ( Basics.min -1 x, y ) model.points
                 , dragging = Just model.id
                 , id = model.id + 1
-                , placing = True
+                , clicked = False
               }
             , Cmd.none
             )
 
-        Move coord ->
+        Move ( x, y ) ->
             case model.dragging of
                 Just id ->
-                    ( { model | points = Dict.insert id coord model.points }
+                    ( { model
+                        | points = Dict.insert id ( Basics.min -1 x, y ) model.points
+                        , clicked = False
+                      }
                     , Cmd.none
                     )
 
@@ -184,14 +211,14 @@ update msg model =
                     ( model, Cmd.none )
 
         Drag id ->
-            ( { model | dragging = id }, Cmd.none )
+            ( { model | dragging = id, clicked = True }, Cmd.none )
 
         Del id ->
-            if model.placing then
-                ( { model | placing = False }, Cmd.none )
+            if model.clicked then
+                ( { model | points = Dict.remove id model.points }, Cmd.none )
 
             else
-                ( { model | points = Dict.remove id model.points }, Cmd.none )
+                ( model, Cmd.none )
 
         UpdateClickbox (Ok { element }) ->
             let
@@ -203,7 +230,7 @@ update msg model =
             in
             ( { model
                 | clickbox = element
-                , viewbox = { viewbox | x = -scale * element.width * 0.8, width = scale * element.width }
+                , viewbox = { viewbox | x = -scale * element.width * 0.7, width = scale * element.width }
               }
             , Cmd.none
             )

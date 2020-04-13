@@ -3,19 +3,34 @@
 <html>
 
     <head>
-        <title>Thin Lens</title>
+        <title>The Thin Lens</title>
         <meta name="viewport" content="width=device-width">
+        <meta charset="utf-8" />
         <style>
             body {
-                max-width: 60em;
-                margin: auto;
+                margin: 0;
             }
             #democontainer {
-                width: 100%;
+                width: 100vw;
                 height: 60vh;
-                max-height: 100vw;
-                background-color: rgba(0,0,0,.1);
+                max-height: 80vw;
                 touch-action: none;
+                background-color: rgba(0,0,0,.1);
+            }
+            #content {
+                max-width: 60em;
+                margin: auto;
+                padding: 0 .5em;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #100320;
+                    color: #FFF;
+                }
+                #democontainer {
+                    background-color: rgba(255,255,255,.1);
+                }
             }
         </style>
     </head>
@@ -23,20 +38,22 @@
     <body>
         <div id="democontainer"><svg id="demosvg"></svg></div>
 
-        <h1>Thin Lens Approximation</h1>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
-        <p>Lenses are pretty brilliant</p>
+        <div id="content">
+            <h1>Big Pinholes</h1>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+            <p>Lenses are pretty brilliant</p>
+        </div>
         <script src="main.js"></script>
         <script>
             const app = Elm.Main.init({
