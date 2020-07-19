@@ -60,11 +60,15 @@ type Msg
 init : () -> ( Model, Cmd Msg )
 init =
     always
-        ( { points = Dict.empty
+        ( { points =
+                Dict.fromList
+                    [ ( 0, ( -80, -40 ) )
+                    , ( 1, ( -120, 20 ) )
+                    ]
           , lens = { diameter = 52, focalLength = 35 }
           , viewbox = { x = -500, y = -100, width = 400, height = 200 }
           , clickbox = { x = -500, y = -100, width = 400, height = 200 }
-          , id = 1
+          , id = 2
           , dragging = Nothing
           , clicked = False
           }
@@ -134,6 +138,54 @@ viewPoint ( id, ( x, y ) ) =
         []
 
 
+viewLens : Viewbox -> Lens -> Svg Msg
+viewLens viewbox lens =
+    let
+        radius =
+            lens.diameter / 2
+
+        fromtop =
+            (viewbox.height - lens.diameter) / 2
+    in
+    g []
+        [ Svg.path
+            [ d <|
+                "M 0 "
+                    ++ String.fromFloat radius
+                    ++ " a 100 100 0 0 0 0 "
+                    ++ String.fromFloat -lens.diameter
+                    ++ " a 100 100 0 0 0 0 "
+                    ++ String.fromFloat lens.diameter
+            , fill <| Color.toCssString <| Color.hsla 0.6 1 0.8 0.8
+            ]
+            []
+        , Svg.path
+            [ d <|
+                "M 0 "
+                    ++ String.fromFloat (viewbox.height / 2)
+                    ++ " v "
+                    ++ String.fromFloat -fromtop
+                    ++ "M 0 "
+                    ++ String.fromFloat (-viewbox.height / 2)
+                    ++ " v "
+                    ++ String.fromFloat fromtop
+            , stroke <| Color.toCssString <| Color.hsla 0 0 0.2 0.8
+            ]
+            []
+        , Svg.path
+            [ d <|
+                "M "
+                    ++ String.fromFloat lens.focalLength
+                    ++ " "
+                    ++ String.fromFloat viewbox.y
+                    ++ " v "
+                    ++ String.fromFloat viewbox.height
+            , stroke <| Color.toCssString <| Color.hsla 0 0 0.8 0.8
+            ]
+            []
+        ]
+
+
 view : Model -> Html Msg
 view ({ clickbox, viewbox, lens } as model) =
     let
@@ -152,21 +204,8 @@ view ({ clickbox, viewbox, lens } as model) =
         pointerDecoder msg =
             Decode.map msg <|
                 Decode.map2 clientToScene
-                    (Decode.field "clientX" Decode.float)
-                    (Decode.field "clientY" Decode.float)
-
-        viewLens =
-            Svg.path
-                [ d <|
-                    "M 0 "
-                        ++ String.fromFloat (lens.diameter / 2)
-                        ++ " a 100 100 0 0 0 0 "
-                        ++ String.fromFloat -lens.diameter
-                        ++ " a 100 100 0 0 0 0 "
-                        ++ String.fromFloat lens.diameter
-                , fill <| Color.toCssString <| Color.hsla 0.6 1 0.8 0.8
-                ]
-                []
+                    (Decode.field "pageX" Decode.float)
+                    (Decode.field "pageY" Decode.float)
     in
     svg
         [ id "demosvg"
@@ -179,7 +218,7 @@ view ({ clickbox, viewbox, lens } as model) =
         , Events.preventDefaultOn "pointerdown" <| Decode.map (\msg -> ( msg, True )) <| pointerDecoder New
         ]
         (List.map (viewRays lens (viewbox.x + viewbox.width)) (Dict.toList model.points)
-            ++ [ viewLens ]
+            ++ [ viewLens viewbox lens ]
             ++ List.map viewPoint (Dict.toList model.points)
         )
 

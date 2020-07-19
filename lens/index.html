@@ -10,12 +10,34 @@
             body {
                 margin: 0;
             }
+            h1 {
+                font-weight: lighter;
+            }
+            p {
+                font-family: system-ui;
+            }
+            .subtitle {
+                margin: 0;
+                font-size: .7em;
+                font-weight: normal;
+                opacity: 0.6;
+            }
+            .img {
+                width: 100%;
+                height: 30em;
+                max-height: 50vw;
+                object-fit: cover;
+            }
             #democontainer {
                 width: 100vw;
                 height: 60vh;
                 max-height: 80vw;
                 touch-action: none;
                 background-color: rgba(0,0,0,.1);
+            }
+            #instructions {
+                margin-top: 0.5em;
+                text-align: center;
             }
             #content {
                 max-width: 60em;
@@ -39,20 +61,57 @@
         <div id="democontainer"><svg id="demosvg"></svg></div>
 
         <div id="content">
-            <h1>Big Pinholes</h1>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
-            <p>Lenses are pretty brilliant</p>
+            <p id="instructions">
+            Click/Drag to add/move points.
+            Click existing points to remove them
+            </p>
+            <h1>Big Pinholes
+                <p class="subtitle" >Or, why lenses are pretty brilliant</p>
+            </h1>
+            <p>
+            Pinhole projections are so easy to make
+            that pinholes are often discovered when people notice their projections:
+            <a
+                title="V. H. Hammer from North Cascade mountains, United States / CC BY (https://creativecommons.org/licenses/by/2.0)"
+                href="https://commons.wikimedia.org/wiki/File:The_dappled_sunlight_under_the_trees_was_very_strange_before_and_after_totality._(36330876490).jpg"
+            >
+                <img
+                    class="img"
+                    alt="The dappled sunlight under the trees was very strange before and after totality. (36330876490)"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/The_dappled_sunlight_under_the_trees_was_very_strange_before_and_after_totality._%2836330876490%29.jpg/256px-The_dappled_sunlight_under_the_trees_was_very_strange_before_and_after_totality._%2836330876490%29.jpg"
+                />
+                Sun projecting through leaves just before an eclipse
+            </a>
+            </p> <p>
+            To understand how to make images with pinholes,
+            we have to look at how light reflects off objects.
+            In general, when light rays hit an object,
+            they bounce off in many directions:
+            <img class="img" src="img/diffuse.svg" />
+            If we lay out a photographic film,
+            light rays from any point can hit many parts of the film.
+            </p> <p>
+            A pinhole camera works
+            by imposing order on the light that passes through it.
+            They make it so that only light coming from one direction
+            can only hit a small part of the film:
+            <img class="img" src="img/pinhole.svg" />
+            </p> <p>
+            The good news is that this produces an image.
+            The bad news is that we now block most of the light in the scene.
+            so we need to wait a long time to collect enough light to form an image.
+            This is fine for landscapes,
+            where you can set your camera on a tripod and leave it for an hour.
+            This is less fine for moving subjects like cats or F1 cars.
+            </p> <p>
+            But what if, instead of blocking these rays
+            that are headed for the wrong part of the film,
+            we could bend them back in the right direction?
+            <img class="img" src="img/lens.svg" />
+            This is what a lens tries to do.
+            An ideal lens projects light like a pinhole,
+            but lets you collect all the light that hits its area.
+            </p>
         </div>
         <script src="main.js"></script>
         <script>
