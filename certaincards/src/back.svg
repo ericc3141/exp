@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="290"
+   height="433"
+   viewBox="0 0 290 433"
+   version="1.1">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="arcs-fill"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#c2d9cb;stop-opacity:1"
+         offset="0"
+         id="stop1447" />
+      <stop
+         style="stop-color:#9cd16b;stop-opacity:1"
+         offset="1"
+         id="stop1449" />
+    </linearGradient>
+    <linearGradient
+       id="flower-fill"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#a4a4a4;stop-opacity:1;"
+         offset="0"
+         id="stop1018" />
+    </linearGradient>
+    <linearGradient
+       id="color-overlay-fill"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#000000;stop-opacity:0"
+         offset="0"
+         id="stop1148" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1"
+         id="stop1150" />
+    </linearGradient>
+    <linearGradient
+       id="rings-fill"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop1094" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="color-clip">
+      <rect
+         id="rect1029"
+         width="260"
+         height="300"
+         x="15"
+         y="24" />
+    </clipPath>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer5"
+     style="display:inline">
+    <path
+       id="background-main"
+       style="display:inline;fill:#e8edeb;fill-opacity:1;stroke:none;stroke-width:0.395;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 10,433 H 221 V 0 H 10 C 4.46,0 0,4.46 0,10 v 413 c 0,5.54 4.46,10 10,10 z" />
+    <path
+       id="background-side"
+       style="display:inline;fill:#bdd6d4;fill-opacity:1;stroke:none;stroke-width:0.395;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 220,0 h 59.94329 C 285.51471,0 290,4.46407 290,10.009125 V 422.99088 C 290,428.53593 285.51471,433 279.94329,433 H 220 Z" />
+    <path
+       style="display:inline;fill:none;fill-opacity:1;stroke:url(#arcs-fill);stroke-width:6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="background-ring2"
+       d="M 0.06774554,361.51704 A 71.612724,71.612724 0 0 1 71.68047,433.12976"
+       clip-path="none"
+       mask="none" />
+    <path
+       style="display:inline;fill:none;fill-opacity:1;stroke:url(#arcs-fill);stroke-width:15;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="background-ring1"
+       d="M -0.32941794,340.83163 A 92.695312,92.695312 0 0 1 92.365895,433.52695"
+       clip-path="none"
+       mask="none" />
+  </g>
+</svg>

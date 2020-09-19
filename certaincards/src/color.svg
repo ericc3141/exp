@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="290"
+   height="433"
+   viewBox="0 0 290 433"
+   version="1.1">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="arcs-fill"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#c2d9cb;stop-opacity:1"
+         offset="0"
+         id="stop1447" />
+      <stop
+         style="stop-color:#9cd16b;stop-opacity:1"
+         offset="1"
+         id="stop1449" />
+    </linearGradient>
+    <linearGradient
+       id="flower-fill"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#a4a4a4;stop-opacity:1;"
+         offset="0"
+         id="stop1018" />
+    </linearGradient>
+    <linearGradient
+       id="color-overlay-fill"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#000000;stop-opacity:0"
+         offset="0"
+         id="stop1148" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1"
+         id="stop1150" />
+    </linearGradient>
+    <linearGradient
+       id="rings-fill"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop1094" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="color-clip">
+      <rect
+         id="rect1029"
+         width="260"
+         height="300"
+         x="15"
+         y="24" />
+    </clipPath>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline">
+    <rect
+       style="display:inline;fill:var(--color);fill-opacity:1;stroke:none;stroke-width:0.533628"
+       id="color"
+       width="260"
+       height="300"
+       x="15"
+       y="24" />
+    <rect
+       style="opacity:0.247;mix-blend-mode:normal;fill:url(#color-overlay-fill);fill-opacity:1;stroke:none;stroke-width:0.534;stroke-miterlimit:4;stroke-dasharray:none"
+       id="color-overlay"
+       width="260"
+       height="300"
+       x="15"
+       y="24" />
+    <circle
+       style="mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ring5"
+       cx="145"
+       cy="174"
+       r="139"
+       clip-path="url(#color-clip)" />
+    <circle
+       style="mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:0.999998;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ring2"
+       cx="145"
+       cy="174"
+       r="89.5" />
+    <circle
+       style="mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ring1"
+       cx="145"
+       cy="174"
+       r="83.5" />
+    <circle
+       style="mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ring4"
+       cx="145"
+       cy="174"
+       r="136.5"
+       clip-path="url(#color-clip)" />
+    <circle
+       style="mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="ring3"
+       cx="145"
+       cy="174"
+       r="134"
+       clip-path="url(#color-clip)" />
+    <g
+       id="flower1"
+       style="display:inline;opacity:1;mix-blend-mode:overlay">
+      <path
+         id="petal1"
+         style="mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 81.886719,31.537109 c -3.157101,0 -12.435547,10.636311 -12.435547,15.056641 0,9.203586 12.435547,40.414063 12.435547,40.414062 0,10e-7 12.4375,-31.210476 12.4375,-40.414062 0,-4.42033 -9.280399,-15.056641 -12.4375,-15.056641 z" />
+      <path
+         id="petal2"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 136.13239,61.54961 c -1.57855,-2.73413 -15.42909,-5.451344 -19.25721,-3.241179 -7.97054,4.601793 -28.781835,30.976531 -28.781834,30.976531 -10e-7,0 33.247814,-4.834047 41.218354,-9.43584 3.82812,-2.210165 8.39924,-15.565382 6.82069,-18.299512 z" />
+      <path
+         id="petal3"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 135.53086,123.83185 c 1.57855,-2.73412 -2.99355,-16.08765 -6.82167,-18.29781 -7.97054,-4.60179 -41.217372,-9.437539 -41.217372,-9.437539 0,0 20.810312,26.376429 28.780852,30.978229 3.82812,2.21016 17.67963,-0.50874 19.25819,-3.24288 z" />
+      <path
+         id="petal4"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 81.118231,153.71739 c 3.1571,0 12.43554,-10.63632 12.43554,-15.05665 0,-9.20358 -12.43554,-40.41406 -12.43554,-40.414059 0,-10e-7 -12.4375,31.210479 -12.4375,40.414059 0,4.42033 9.2804,15.05665 12.4375,15.05665 z" />
+      <path
+         id="petal5"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 26.872557,123.70488 c 1.57855,2.73413 15.42909,5.45135 19.25721,3.24118 7.97054,-4.60179 28.781834,-30.976529 28.781834,-30.976529 0,0 -33.247814,4.834049 -41.218354,9.435839 -3.82812,2.21017 -8.39924,15.56538 -6.82069,18.29951 z" />
+      <path
+         id="petal6"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 27.474087,61.422648 c -1.57855,2.73412 2.99355,16.08765 6.82167,18.29781 7.97054,4.60179 41.217374,9.437534 41.217374,9.437534 0,0 -20.810314,-26.376424 -28.780854,-30.978224 -3.82812,-2.21016 -17.67963,0.50874 -19.25819,3.24288 z" />
+    </g>
+    <circle
+       style="opacity:1;mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:15;stroke-miterlimit:4;stroke-dasharray:var(--inner-dash)"
+       id="ringInner"
+       cx="145"
+       cy="174"
+       r="47.5" />
+    <circle
+       style="opacity:1;mix-blend-mode:overlay;fill:none;stroke:url(#rings-fill);stroke-width:6;stroke-miterlimit:4;stroke-dasharray:var(--outer-dash)"
+       id="ringOuter"
+       cx="145"
+       cy="174"
+       r="109.5" />
+    <g
+       id="flower1-6"
+       style="display:inline;opacity:1;mix-blend-mode:overlay;stroke-width:2.19801"
+       transform="matrix(0.45495715,0,0,0.45495715,200.91987,245.65197)">
+      <path
+         id="petal1-7"
+         style="mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 81.886719,31.537109 c -3.157101,0 -12.435547,10.636311 -12.435547,15.056641 0,9.203586 12.435547,40.414063 12.435547,40.414062 0,10e-7 12.4375,-31.210476 12.4375,-40.414062 0,-4.42033 -9.280399,-15.056641 -12.4375,-15.056641 z" />
+      <path
+         id="petal2-5"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 136.13239,61.54961 c -1.57855,-2.73413 -15.42909,-5.451344 -19.25721,-3.241179 -7.97054,4.601793 -28.781835,30.976531 -28.781834,30.976531 -10e-7,0 33.247814,-4.834047 41.218354,-9.43584 3.82812,-2.210165 8.39924,-15.565382 6.82069,-18.299512 z" />
+      <path
+         id="petal3-3"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 135.53086,123.83185 c 1.57855,-2.73412 -2.99355,-16.08765 -6.82167,-18.29781 -7.97054,-4.60179 -41.217372,-9.437539 -41.217372,-9.437539 0,0 20.810312,26.376429 28.780852,30.978229 3.82812,2.21016 17.67963,-0.50874 19.25819,-3.24288 z" />
+      <path
+         id="petal4-5"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 81.118231,153.71739 c 3.1571,0 12.43554,-10.63632 12.43554,-15.05665 0,-9.20358 -12.43554,-40.41406 -12.43554,-40.414059 0,-10e-7 -12.4375,31.210479 -12.4375,40.414059 0,4.42033 9.2804,15.05665 12.4375,15.05665 z" />
+      <path
+         id="petal5-6"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 26.872557,123.70488 c 1.57855,2.73413 15.42909,5.45135 19.25721,3.24118 7.97054,-4.60179 28.781834,-30.976529 28.781834,-30.976529 0,0 -33.247814,4.834049 -41.218354,9.435839 -3.82812,2.21017 -8.39924,15.56538 -6.82069,18.29951 z" />
+      <path
+         id="petal6-2"
+         style="display:inline;mix-blend-mode:normal;fill:url(#flower-fill);fill-opacity:1;stroke:none;stroke-width:2.19801px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 27.474087,61.422648 c -1.57855,2.73412 2.99355,16.08765 6.82167,18.29781 7.97054,4.60179 41.217374,9.437534 41.217374,9.437534 0,0 -20.810314,-26.376424 -28.780854,-30.978224 -3.82812,-2.21016 -17.67963,0.50874 -19.25819,3.24288 z" />
+    </g>
+  </g>
+</svg>

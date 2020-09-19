@@ -1,0 +1,15 @@
+{
+  "name": "dream",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  },
+  "scripts": {
+    "build": "webpack --mode='production'",
+    "dev": "webpack --mode='development' --devtool='eval-cheap-module-source-map' --watch"
+  }
+}
