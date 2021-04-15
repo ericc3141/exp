@@ -81,7 +81,6 @@ function Choice(props) {
 function TextPrompt(props) {
     const inputRef = useRef();
     useEffect(() => {
-        console.log(inputRef.current);
         if (inputRef.current) {
             inputRef.current.focus();
         }
@@ -97,15 +96,19 @@ function TextPrompt(props) {
         alignItems: "center",
         justifyContent: "center",
     }}>
-        <div style={{
+        <form style={{
             display: "inline-block",
             padding: "1em",
             border: ".1em solid #f6c4e0",
             backgroundColor: "#fde7f3",
             textAlign: "center",
-        }}>
+        }} onSubmit={(e) => {
+            e.preventDefault();
+            const data = new FormData(e.target);
+            props.onTextPrompt(data.get("response"));
+        }} >
             <p style={{ color: "black" }}>{props.prompt}</p>
-            <input type="text" ref={inputRef} style={{
+            <input type="text" ref={inputRef} name="response" style={{
                 width: "100%",
                 backgroundColor: "transparent",
                 fontSize: "1em",
@@ -117,8 +120,7 @@ function TextPrompt(props) {
                 WebkitTextStroke: ".05em black",
                 letterSpacing: "-0.05em",
             }} />
-            <input type="button" 
-                onClick={(e) => props.onTextPrompt(inputRef.current.value)} 
+            <input type="submit" 
                 value="OK"
                 style={{
                     backgroundColor: "transparent",
@@ -128,7 +130,7 @@ function TextPrompt(props) {
                     WebkitTextStroke: ".08em #a97e94",
                     letterSpacing: "-0.08em",
                 }}/>
-        </div>
+        </form>
     </div>
 
 }
@@ -184,10 +186,12 @@ function Dialogue(props) {
 export default function VN(props) {
     const [line, setLine] = useState({});
     const [showInput, setShowInput] = useState(false);
+    const containerRef = useRef();
 
     const script = props.script;
     const show = (...args) => {
         setShowInput(false);
+        containerRef.current.focus();
 
         let resolve;
         const shown = new Promise((res, rej) => {resolve = res;});
@@ -203,15 +207,28 @@ export default function VN(props) {
         script({ show });
     }, [script]);
 
-    const handleDialogue = (e) => {
-        if (["A", "INPUT"].indexOf(e.target.tagName) >= 0) {
-            return;
-        } else if ("choice" in line || "textPrompt" in line) {
+    const advance = () => {
+        if ("choice" in line || "textPrompt" in line) {
             setShowInput(true);
         } else {
             line.shown(null);
         }
     }
+    const handleDialogue = (e) => {
+        if (["A", "INPUT"].indexOf(e.target.tagName) >= 0) {
+            return;
+        } else {
+            advance();
+        }
+    }
+    const handleKey = (e) => {
+        if (["A", "INPUT"].indexOf(e.target.tagName) >= 0) {
+            return;
+        } else if (["Space", "ArrowRight", "Enter"].indexOf(e.code) >= 0) {
+            advance();
+        }
+    }
+
     let inputElement = null;
     if (showInput) {
         if ("choice" in line) {
@@ -226,7 +243,7 @@ export default function VN(props) {
         height: "100%",
         position: "relative",
         fontSize: "1.5em",
-    }} onClick={handleDialogue} >
+    }} ref={containerRef} tabIndex="0" onKeyDown={handleKey} onClick={handleDialogue} >
         {typeof line.background === "object" ? Object.values(line.background) : null}
         { "dialogue" in line ? <Dialogue  {...line.dialogue} onDialogue={handleDialogue} /> : null }
         { inputElement }
