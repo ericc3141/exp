@@ -1,5 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+export function Background(props) {
+    return <img src={props.src} style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        left: 0,
+        top: 0,
+        objectFit: "cover",
+    }} />
+}
+
+export function Character(props) {
+    return <img src={props.src} style={{
+        transition: "all 1s ease-in-out",
+        position: "absolute",
+        left: `${props.pos}%`,
+        bottom: 0,
+        height: "100%",
+        maxWidth: "100%",
+        transform: "translate(-50%,0)",
+        objectFit: "contain",
+        objectPosition: "bottom"
+    }} />
+}
+
 function Option(props) {
     const [isHover, setHover] = useState(false);
     let hoverStyles = {
@@ -99,6 +124,7 @@ function TextPrompt(props) {
                     backgroundColor: "transparent",
                     fontSize: "1.5em",
                     fontWeight: "900",
+                    color: "white",
                     WebkitTextStroke: ".08em #a97e94",
                     letterSpacing: "-0.08em",
                 }}/>
@@ -119,6 +145,7 @@ function Dialogue(props) {
             width: "7em",
             height: "1.5em",
             textAlign: "center",
+            color: "white",
             backgroundColor: "#FFFFFFDD",
             borderBottom: ".3em solid #88888888",
             borderRadius: ".5em .5em 0 0",
@@ -154,16 +181,22 @@ function Dialogue(props) {
     </div>
 }
 
-export function VN(props) {
+export default function VN(props) {
     const [line, setLine] = useState({});
     const [showInput, setShowInput] = useState(false);
 
     const script = props.script;
-    const show = (newLine) => {
+    const show = (...args) => {
         setShowInput(false);
+
         let resolve;
         const shown = new Promise((res, rej) => {resolve = res;});
-        setLine({...newLine, shown: resolve});
+        let newLine = { shown: resolve };
+        for (const i of args) {
+            newLine = {...newLine, ...i};
+        }
+        setLine(newLine);
+
         return shown;
     }
     useEffect(() => {

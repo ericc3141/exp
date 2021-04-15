@@ -14,6 +14,10 @@ module.exports = {
             loader: "babel-loader",
             options: { presets: ["@babel/preset-react"] },
         },
+        {
+            test: /\.(webp|png|jpg)$/i,
+            loader: "file-loader",
+        }
     ],
   },
 };
