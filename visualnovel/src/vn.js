@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export function Background(props) {
-    return <img src={props.src} style={{
+    const { src } = props;
+    if (!src) { return null; }
+    return <img src={src} style={{
         width: "100%",
         height: "100%",
         position: "absolute",
@@ -12,10 +14,12 @@ export function Background(props) {
 }
 
 export function Character(props) {
-    return <img src={props.src} style={{
+    const { src, pos } = props;
+    if (!src) { return null; }
+    return <img src={src} style={{
         transition: "all 1s ease-in-out",
         position: "absolute",
-        left: `${props.pos}%`,
+        left: `${pos}%`,
         bottom: 0,
         height: "100%",
         maxWidth: "100%",
@@ -26,6 +30,7 @@ export function Character(props) {
 }
 
 function Option(props) {
+    const { onNext, text } = props;
     const [isHover, setHover] = useState(false);
     let hoverStyles = {
         backgroundColor: "#fde7f3",
@@ -40,8 +45,8 @@ function Option(props) {
 
     return <input 
         type="button"
-        onClick={(e) => props.onClick(e)}
-        value={props.text}
+        onClick={onNext}
+        value={text}
         onPointerEnter={(e) => setHover(true)}
         onPointerLeave={(e) => setHover(false)}
         style={{
@@ -56,11 +61,13 @@ function Option(props) {
         }}
     />
 }
-function Choice(props) {
-    const optionElems = props.options.map((option, idx) => (
+export function Choice(props) {
+    const { options, onNext } = props;
+    if (!options) { return null; }
+    const optionElems = options.map((option, idx) => (
         <Option 
             key={idx}
-            onClick={(e) => props.onChoice(option[1])}
+            onNext={(e) => onNext(option[1])}
             text={option[0]}
         />
     ));
@@ -78,13 +85,15 @@ function Choice(props) {
     }}>{optionElems}</div>
 }
 
-function TextPrompt(props) {
+export function TextPrompt(props) {
+    const { onNext, prompt } = props;
     const inputRef = useRef();
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
         }
     });
+    if (!prompt) { return null; }
     return <div style={{
         position: "absolute",
         left: 0,
@@ -105,9 +114,9 @@ function TextPrompt(props) {
         }} onSubmit={(e) => {
             e.preventDefault();
             const data = new FormData(e.target);
-            props.onTextPrompt(data.get("response"));
+            onNext(data.get("response"));
         }} >
-            <p style={{ color: "black" }}>{props.prompt}</p>
+            <p style={{ color: "black" }}>{prompt}</p>
             <input type="text" ref={inputRef} name="response" style={{
                 width: "100%",
                 backgroundColor: "transparent",
@@ -135,12 +144,25 @@ function TextPrompt(props) {
 
 }
 
-function Dialogue(props) {
-    let quote = null;
-    let speaker = null;
+export function Dialogue(props) {
+    const { onNext, speaker, text } = props;
+    const boxRef = useRef(null);
+    useEffect(() => {
+        if (boxRef.current) {
+            boxRef.current.focus();
+        }
+    });
+    if (!text) { return null; }
+    const shouldIgnore = (e) => ["A", "INPUT"].indexOf(e.target.tagName) >= 0
+    const handleEvent = (e) => {
+        if (shouldIgnore(e)) { return; }
+        onNext();
+    };
+    let quoteElem = null;
+    let speakerElem = null;
     if ("speaker" in props) {
-        quote = <span>"</span>;
-        speaker = <p style={{
+        quoteElem = <span>"</span>;
+        speakerElem = <p style={{
             position: "absolute",
             left: "1em",
             top: "-1.6em",
@@ -154,7 +176,7 @@ function Dialogue(props) {
             fontWeight: "900",
             WebkitTextStroke: ".08em #935482",
             letterSpacing: "-.08em",
-        }}>{props.speaker}</p>;
+        }}>{speaker}</p>;
     }
     return <div style={{
             position: "absolute",
@@ -162,7 +184,7 @@ function Dialogue(props) {
             bottom: "1%",
             width: "90%",
     }} >
-        <div style={{
+        <div onClick={handleEvent} onKeyDown={handleEvent} tabindex="0" ref={boxRef} style={{
             position: "relative",
             margin: "0 auto",
             maxWidth: "50em",
@@ -171,81 +193,64 @@ function Dialogue(props) {
             border: ".15em solid #FFFFFF",
             padding: "1em",
         }}>
-            {speaker}
+            {speakerElem}
             <p style={{
                 height: "3em",
                 color: "white",
                 fontWeight: "700",
                 WebkitTextStroke: ".05em black",
                 letterSpacing: "-0.05em",
-            }}>{quote}{props.text}{quote}</p>
+            }}>{quoteElem}{text}{quoteElem}</p>
         </div>
     </div>
 }
 
-export default function VN(props) {
-    const [line, setLine] = useState({});
+export function DialogueInput(props) {
+    const { dialogue, textPrompt, choice, onNext } = props;
     const [showInput, setShowInput] = useState(false);
-    const containerRef = useRef();
 
-    const script = props.script;
-    const show = (...args) => {
-        setShowInput(false);
-        containerRef.current.focus();
-
-        let resolve;
-        const shown = new Promise((res, rej) => {resolve = res;});
-        let newLine = { shown: resolve };
-        for (const i of args) {
-            newLine = {...newLine, ...i};
-        }
-        setLine(newLine);
-
-        return shown;
-    }
-    useEffect(() => {
-        script({ show });
-    }, [script]);
-
-    const advance = () => {
-        if ("choice" in line || "textPrompt" in line) {
+    const advance = (e) => {
+        if (textPrompt || choice) {
             setShowInput(true);
         } else {
-            line.shown(null);
+            onNext(e);
         }
-    }
-    const handleDialogue = (e) => {
-        if (["A", "INPUT"].indexOf(e.target.tagName) >= 0) {
-            return;
-        } else {
-            advance();
-        }
-    }
-    const handleKey = (e) => {
-        if (["A", "INPUT"].indexOf(e.target.tagName) >= 0) {
-            return;
-        } else if (["Space", "ArrowRight", "Enter"].indexOf(e.code) >= 0) {
-            advance();
-        }
-    }
+    };
 
-    let inputElement = null;
+    let inputElem = null;
     if (showInput) {
-        if ("choice" in line) {
-            inputElement = <Choice {...line.choice} onChoice={line.shown} />;
-        } else if ("textPrompt" in line) {
-            inputElement = <TextPrompt {...line.textPrompt} onTextPrompt={line.shown} />;
+        if (textPrompt) {
+            inputElem = <TextPrompt onNext={onNext} {...textPrompt} />;
+        } else if (choice) {
+            inputElem = <Choice onNext={onNext} {...choice} />;
         }
     }
-
-    return <div style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        fontSize: "1.5em",
-    }} ref={containerRef} tabIndex="0" onKeyDown={handleKey} onClick={handleDialogue} >
-        {typeof line.background === "object" ? Object.values(line.background) : null}
-        { "dialogue" in line ? <Dialogue  {...line.dialogue} onDialogue={handleDialogue} /> : null }
-        { inputElement }
-    </div>
+    return <>
+        <Dialogue onNext={advance} {...dialogue} />
+        {inputElem}
+    </>;
 }
+
+export function useImp(Component, initProps) {
+    const [props, setProps] = useState(initProps || {});
+    const update = (...newProps) => {
+        let onNext;
+        const nextPromise = new Promise( resolve => { onNext = resolve } );
+        let withNext = { onNext };
+        for (const i of newProps) {
+            withNext = { ...withNext, ...i };
+        }
+        setProps(withNext);
+        return nextPromise;
+    };
+
+    return [<Component {...props} />, update];
+}
+
+export function useScript(script) {
+    const scriptRef = useRef(script);
+    useEffect(() => scriptRef.current(), []);
+}
+
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+

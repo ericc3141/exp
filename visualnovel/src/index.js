@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import ReactDOM from "react-dom";
 
-import VN, { Background, Character } from "./vn";
+import VN, { useImp, useScript, DialogueInput, Background, Character } from "./vn";
 import club from "./demo/Club.webp";
 import classroom from "./demo/Class.webp";
 import mon1 from "./demo/Mon1.webp";
@@ -10,26 +10,22 @@ import mon22 from "./demo/Mon22.webp";
 import mon18 from "./demo/Mon18.webp";
 
 function Demo(props) {
-    const script = useRef(async (ui) => {
-        const scene = { background: { bg: <Background key="bg" src={club} /> } };
+    const [ monikaElem, setMonika ] = useImp(Character, {src: mon1});
+    const [ backElem, setBack ] = useImp(Background, {src: club});
+    const [ diElem, show ] = useImp(DialogueInput);
+    useScript(async () => {
         // convenience shortcuts
-        const show = (...args) => ui.show(scene, ...args);
-        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        const monika = (src, pos) => {
-            scene.background.monika = <Character
-                key="monika"
-                src={src}
-                pos={pos}
-            />;
-        }
-        let playerName = "???";
-        let metMonika = false;
+        const bg = (src) => setBack({ src });
+        const monika = (src, pos) => setMonika({ src, pos });
         const m = (text) => ({ dialogue: { speaker: metMonika? "Monika" : "???", text, } });
         const u = (text) => ({ dialogue: { speaker: playerName, text, } });
+
         const choice = (...options) => ({ choice: { options } });
         const prompt_ = (prompt) => ({ textPrompt: { prompt } });
 
         // Action!
+        let playerName = "???";
+        let metMonika = false;
         const startTime = new Date();
         monika(mon1, 50);
         await show(m("Ah, didn't expect to see anyone here."));
@@ -51,7 +47,8 @@ function Demo(props) {
             monika(mon2, 50);
         } else {
             monika(mon2, 50);
-            await show(m("I'm Monika, let me show you around"));
+            await show(m("Guess we haven't met. I'm Monika."));
+            await show(m("Let me show you around"));
             metMonika = true;
         }
         let firstLoop = true;
@@ -94,7 +91,7 @@ function Demo(props) {
                 await show(m("... move around..."));
                 monika(mon2, 50);
                 if (!changedBackground) {
-                    scene.background.bg = <Background src={classroom} key="bg" />
+                    bg(classroom);
                     changedBackground = true;
                     await show(m("... and flip the background!"));
                     await show(m("No transition on that one though."));
@@ -104,11 +101,14 @@ function Demo(props) {
                 await show(m("More animations and sound might be possible..."));
                 await show(m("I'm not sure if they'll happen though."));
             } else if (branch === "how") {
-                await show(m("In the spirit of doing things in unconventional ways..."));
-                await show(m("... all game scripting is done with Javascript and HTML and CSS."));
+                await show(m("It seems pretty typical for visual novel engines to come with their own scripting language."));
+                await show(m("These languages make it simple and easy to define characters, offer choices, and do visual novel stuff."));
+                await show(m("In the spirit of being highly atypical..."));
+                await show(m("... Everything here is written in full, fat Javascript, in all its Turing complete glory."));
                 await show(m("The good news is that I can do real interesting stuff, ..."));
                 await show(m(`... like tell you it's been ${(new Date() - startTime) / 1000} seconds since we started talking.`));
-                await show(m("The bad news is, well, Javascript."));
+                await show(m("The bad news is that characters, saves, and literally any niceties are on you."));
+                await show(m("And, well, Javascript."));
             } else if (branch === "who") {
                 await show(m("No. I write Python. And poetry."));
                 monika(mon18, 50);
@@ -118,7 +118,9 @@ function Demo(props) {
             firstLoop = false;
         }
     });
-    return <VN script={script.current} />;
+    return <div style={{ fontSize: "1.5em" }}>
+        {backElem} {monikaElem} {diElem}
+    </div>;
 }
 
 ReactDOM.render(
