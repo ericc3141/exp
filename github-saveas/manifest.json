@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "Linus Git Tips",
+  "version": "1.0",
+
+  "description": "Make right-click \"Save As \" work on individual files on Github",
+  "icons": {
+      "1024": "icons/linusgittips.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.github.com/*"],
+      "js": ["github-saveas.js"]
+    }
+  ]
+}
