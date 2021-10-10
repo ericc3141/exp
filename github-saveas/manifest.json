@@ -7,6 +7,11 @@
   "icons": {
       "1024": "icons/linusgittips.png"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "update_url": "https://raw.githubusercontent.com/ericc3141/exp/master/github-saveas/updates.json"
+    }
+  },
 
   "content_scripts": [
     {
